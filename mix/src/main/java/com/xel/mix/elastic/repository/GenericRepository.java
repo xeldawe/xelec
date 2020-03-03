@@ -12,7 +12,7 @@ import reactor.core.publisher.Flux;
 public interface GenericRepository<T> {
 
 	void setClazz(Class<T> clazz);
-	Flux<ServerResponse> findWithFilters(Map<String, String> mustMap, Map<String, String> shouldMap,
+	Flux<ServerResponse> findWithFilters(Map<String, String> map,
 			Map<String, String> configMap);
 	
 	

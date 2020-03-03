@@ -65,14 +65,14 @@ public class GenericRepositoryImpl<T> implements GenericRepository<T> {
 
 	
 	@Override
-	public Flux<ServerResponse> findWithFilters(Map<String, String> mustMap, Map<String, String> shouldMap, Map<String, String> configMap) {
+	public Flux<ServerResponse> findWithFilters(Map<String, String> map, Map<String, String> configMap) {
 		ServerResponse sr = new ServerResponse();
 		SearchRequest searchRequest = new SearchRequest();
 		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 		sourceBuilder.from(0);
 		sourceBuilder.size(5);
 		sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-		sourceBuilder.query(getMustQuery(mustMap));
+		sourceBuilder.query(getQuery(map,configMap));
 
 		searchRequest.source(sourceBuilder);
 		Object response = null;
@@ -97,7 +97,7 @@ public class GenericRepositoryImpl<T> implements GenericRepository<T> {
 		this.clazz = clazz;
 	}
 
-	private BoolQueryBuilder getMustQuery(Map<String, String> map){
+	private BoolQueryBuilder getQuery(Map<String, String> map, Map<String, String> configMap){
 		BoolQueryBuilder qb = QueryBuilders.boolQuery();
 		map.forEach((k,v)->{
 			qb.must(QueryBuilders.matchQuery(k, v).fuzziness(Fuzziness.AUTO)

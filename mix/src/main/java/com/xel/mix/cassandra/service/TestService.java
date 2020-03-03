@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.xel.mix.cassandra.entity.Test;
+import com.xel.mix.cassandra.model.Test;
 import com.xel.mix.cassandra.repository.BasicRepository;
 import com.xel.mix.cassandra.repository.TestRepositoryImpl;
 

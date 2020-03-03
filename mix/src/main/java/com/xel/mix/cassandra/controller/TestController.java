@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.xel.mix.cassandra.entity.Test;
+import com.xel.mix.cassandra.model.Test;
 import com.xel.mix.cassandra.service.TestService;
 
 @RestController

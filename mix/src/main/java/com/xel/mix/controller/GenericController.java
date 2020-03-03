@@ -34,7 +34,7 @@ public class GenericController {
 		Map<String, String> map = new LinkedHashMap<>();
 		map.put("test1", "alma");
 		//
-		return gr.findWithFilters(map,null,null);
+		return gr.findWithFilters(map,null);
 	}
 
 

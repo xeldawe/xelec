@@ -14,7 +14,7 @@ import org.springframework.data.cassandra.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.datastax.driver.core.Session;
-import com.xel.mix.cassandra.entity.Test;
+import com.xel.mix.cassandra.model.Test;
 
 @Repository
 
