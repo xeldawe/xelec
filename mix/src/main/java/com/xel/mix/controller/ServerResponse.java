@@ -22,6 +22,11 @@ public class ServerResponse {
 	public void setHttpStatus(HttpStatus httpStatus) {
 		this.httpStatus = httpStatus;
 	}
+	
+	public void setThis(ServerResponse sr) {
+		this.message = sr.getMessage();
+		this.httpStatus = sr.getHttpStatus();
+	}
 
 	@Override
 	public String toString() {

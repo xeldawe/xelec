@@ -1,4 +1,4 @@
-package com.xel.mix.controller;
+package com.xel.mix.webclient.client;
 
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -17,7 +17,15 @@ public class GenericWebClient<T> {
 	}
 
 	public void createWebClient(String host, int port) {
-		client = WebClient.create("http://" + host + ":" + port);
+		if(port != 443) {
+			client = WebClient.create("http://" + host + ":" + port);
+		}else {
+			client = WebClient.create("https://" + host + ":" + port);
+		}
+	}
+	
+	public void createWebClient(String url) {
+			client = WebClient.create(url);
 	}
 
 	public WebClient getClient() {
