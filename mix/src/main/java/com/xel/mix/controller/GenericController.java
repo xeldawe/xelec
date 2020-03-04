@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.xel.mix.elastic.model.User;
 import com.xel.mix.elastic.repository.GenericRepository;
+import com.xel.mix.webclient.service.RequestService;
 
 import reactor.core.publisher.Flux;
 
@@ -22,12 +23,14 @@ public class GenericController {
 	@Autowired
 	GenericRepository<User> gr;
 	
+	@Autowired
+	RequestService rs;
+	
 	@PostConstruct
 	private void init() {
 		gr.setClazz(User.class);
 	}
-
-
+	
 	@GetMapping("/user")
 	public Flux<ServerResponse> findWithFilters() {
 		//TMP
@@ -35,6 +38,11 @@ public class GenericController {
 		map.put("test1", "alma");
 		//
 		return gr.findWithFilters(map,null);
+	}
+	
+	@GetMapping("/test")
+	public Flux<ServerResponse> test() {
+		return Flux.just(rs.getData(rs.requestUrl("http://localhost:8097/user")));
 	}
 
 

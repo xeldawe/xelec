@@ -16,28 +16,29 @@ public class GenericWebClient<T> {
 		this.clazz = clazz;
 	}
 
+	public GenericWebClient() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public void createWebClient(String host, int port) {
-		if(port != 443) {
-			client = WebClient.create("http://" + host + ":" + port);
-		}else {
-			client = WebClient.create("https://" + host + ":" + port);
+		if (port != 443) {
+			client = WebClient.builder().baseUrl("http://" + host + ":" + port).build();
+		} else {
+			client = WebClient.builder().baseUrl("https://" + host + ":" + port).build();
 		}
 	}
-	
+
 	public void createWebClient(String url) {
-			client = WebClient.create(url);
+		client = WebClient.create(url);
 	}
 
 	public WebClient getClient() {
 		return client;
 	}
 
-	public Flux<T> getFlux(){
-		 Flux<T> flux = client.get()
-				  .uri(endpoint)
-				  .retrieve()
-				  .bodyToFlux(clazz);
-				return flux;
-	 }
-	
+	public Flux<T> getFlux() throws WebClientException {
+		return client.get().uri(endpoint).retrieve().bodyToFlux(clazz).doOnError(t -> new WebClientException("Unknow error"));
+	}
+
 }
