@@ -14,14 +14,16 @@ import org.springframework.stereotype.Service;
 
 import com.xel.mix.controller.ServerResponse;
 import com.xel.mix.webclient.bean.ClientConnectionBean;
-import com.xel.mix.webclient.client.GenericWebClient;
+import com.xel.mix.webclient.client.DefaultWebClient;
 import com.xel.mix.webclient.client.WebClientException;
+
+import io.netty.handler.codec.http.HttpMethod;
 
 @Service
 @PropertySource(name = "rest", value = "rest.properties")
 public class RequestService {
 
-	private static Map<String, GenericWebClient<ServerResponse>> wc = new LinkedHashMap<>();
+	private static Map<String, DefaultWebClient<ServerResponse>> wc = new LinkedHashMap<>();
 	private ExecutorService es = Executors.newFixedThreadPool(1);
 	private ClientConnectionBean ccb = new ClientConnectionBean();
 	private ExecutorService esCore = Executors.newCachedThreadPool();
@@ -30,41 +32,67 @@ public class RequestService {
 	@Value("${request.service.timeout:1000}")
 	private int timeout;
 
+	public enum RequestMode {
+		GET, POST, PUT, DELETE;
+	}
+	
 	private enum DataMode {
 		URL, IP, PORT, ENDPOINT;
 	}
 
 	@SuppressWarnings("unchecked")
 	public UUID requestUrl(String url) {
+		return requestUrl(url, RequestMode.GET, null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public UUID requestUrl(String url, RequestMode requestMode, Object bodyData) {
 		UUID id = UUID.randomUUID();
 		Runnable r =()->{
 			Map<DataMode, Object> data = new LinkedHashMap<>();
 			data.put(DataMode.URL, url);
-			rData.put(id, getResponse(data));
+			rData.put(id, getResponse(data, requestMode, bodyData));
 		};
 		esCore.submit(r);
 		return id;
 	}
 
 	@SuppressWarnings("unchecked")
-	public UUID requestUrl(String ip, int port, String endpoint) {
+	public UUID requestUrl(String ip, int port, String endpoint, RequestMode requestMode, Object bodyData) {
 		UUID id = UUID.randomUUID();
 		Runnable r =()->{
 			Map<DataMode, Object> data = new LinkedHashMap<>();
 			data.put(DataMode.IP, ip);
 			data.put(DataMode.PORT, port);
 			data.put(DataMode.ENDPOINT, endpoint);
-			rData.put(id, getResponse(data));
+			rData.put(id, getResponse(data, requestMode, bodyData));
 		};
 		esCore.submit(r);
 		return id;
 	}
+	
 
 	@SuppressWarnings("unchecked")
-	private ServerResponse getResponse(Map<DataMode, Object> data) {
+	private ServerResponse getResponse(Map<DataMode, Object> data, RequestMode requestMode, Object bodyData) {
 		ServerResponse response = new ServerResponse();
 		try {
-			createClient(data).getFlux().subscribe(res -> response.setMessage(res));
+			switch (requestMode) {
+			case GET:
+				createClient(data).getFlux().subscribe(res -> response.setMessage(res));
+				break;
+			case POST:
+				createClient(data).postFlux(bodyData).subscribe(res -> response.setMessage(res));
+				break;
+			case PUT:
+				createClient(data).putFlux(bodyData).subscribe(res -> response.setMessage(res));
+				break;
+			case DELETE:
+				createClient(data).deleteFlux().subscribe(res -> response.setMessage(res));
+				break;
+
+			default:
+				break;
+			}
 			int counter = 0;
 			while (response.getMessage() == null) {
 				counter++;
@@ -91,7 +119,7 @@ public class RequestService {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private GenericWebClient createClient(Map<DataMode, Object> data) {
+	private DefaultWebClient createClient(Map<DataMode, Object> data) {
 		ClientConnectionBean ccb = new ClientConnectionBean();
 		data.forEach((k, v) -> {
 			switch (k) {
@@ -118,9 +146,9 @@ public class RequestService {
 				break;
 			}
 		});
-		GenericWebClient<ServerResponse> webClient = wc.get(ccb.getIp() + ccb.getPort());
+		DefaultWebClient<ServerResponse> webClient = wc.get(ccb.getIp() + ccb.getPort());
 		if (webClient == null) {
-			webClient = new GenericWebClient<>(ccb.getEndpoint(), ServerResponse.class);
+			webClient = new DefaultWebClient<>(ccb.getEndpoint(), ServerResponse.class);
 			webClient.createWebClient(ccb.getIp(), ccb.getPort());
 			wc.put(ccb.getIp() + ccb.getPort(), webClient);
 		}

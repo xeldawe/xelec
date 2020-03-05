@@ -15,6 +15,8 @@ import javax.annotation.PostConstruct;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -24,6 +26,8 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +35,7 @@ import org.springframework.stereotype.Component;
 public class ElasticClient {
 
 	public enum Mode {
-		INDEX, GET, SEARCH;
+		INDEX, GET, SEARCH, DELETE;
 	}
 
 	@Value("${elastic.search.http.hosts}")
@@ -49,15 +53,17 @@ public class ElasticClient {
 	private ActionListener<IndexResponse> indexListener;
 	private ActionListener<GetResponse> getListener;
 	private ActionListener<SearchResponse> searchListener;
+	private ActionListener<BulkByScrollResponse> deleteListener;
 	private Map<UUID, Object> responseMap = new LinkedHashMap<>();
 	private UUID currentRequestor;
 
 	@PostConstruct
 	private void init() {
 		createClient(genHttpHosts());
-		createIndexListener();
 		createGetListener();
+		createIndexListener();
 		createSearchListener();
+		createDeleteListener();
 	}
 
 	private HttpHost[] genHttpHosts() {
@@ -130,6 +136,20 @@ public class ElasticClient {
 			}
 		};
 	}
+	
+	private void createDeleteListener() {
+		deleteListener = new ActionListener<BulkByScrollResponse>() {
+			@Override
+			public void onResponse(BulkByScrollResponse deleteResponse) {
+				responseMap.put(currentRequestor, deleteResponse);
+			}
+
+			@Override
+			public void onFailure(Exception e) {
+				responseMap.put(currentRequestor, e.getMessage());
+			}
+		};
+	}
 
 	private void createClient(HttpHost... hosts) {
 		client = new RestHighLevelClient(RestClient.builder(hosts));
@@ -161,6 +181,9 @@ public class ElasticClient {
 		case SEARCH:
 			client.searchAsync((SearchRequest) request, RequestOptions.DEFAULT, getListenerByEnum(mode));
 			break;
+		case DELETE:
+			client.deleteByQueryAsync((DeleteByQueryRequest) request, RequestOptions.DEFAULT, getListenerByEnum(mode));
+			break;
 		default:
 			break;
 		}
@@ -176,6 +199,8 @@ public class ElasticClient {
 			return this.getListener;
 		case SEARCH:
 			return this.searchListener;
+		case DELETE:
+			return this.deleteListener;
 
 		default:
 			return null;

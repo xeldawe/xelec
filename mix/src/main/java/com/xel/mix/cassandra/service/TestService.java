@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xel.mix.cassandra.model.Test;
-import com.xel.mix.cassandra.repository.BasicRepository;
-import com.xel.mix.cassandra.repository.TestRepositoryImpl;
+import com.xel.mix.cassandra.repository.CassandraBaseRepository;
+import com.xel.mix.cassandra.repository.CassandraRepositoryImpl;
 
 import reactor.core.publisher.Flux;
 
@@ -17,10 +17,10 @@ import reactor.core.publisher.Flux;
 public class TestService {
 
 	@Autowired
-	TestRepositoryImpl testRepository;
+	CassandraRepositoryImpl testRepository;
 	
 	@Autowired
-	BasicRepository basicRepository;
+	CassandraBaseRepository basicRepository;
 
 	public void initializeTests(List<Test> tests) {
 		basicRepository.insert(tests).subscribe();

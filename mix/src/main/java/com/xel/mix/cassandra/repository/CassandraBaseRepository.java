@@ -7,6 +7,6 @@ import com.xel.mix.cassandra.key.TestKey;
 import com.xel.mix.cassandra.model.Test;
 
 @Repository
-public interface BasicRepository extends ReactiveCassandraRepository<Test, TestKey>{
+public interface CassandraBaseRepository extends ReactiveCassandraRepository<Test, TestKey>{
 
 }

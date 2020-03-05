@@ -9,11 +9,12 @@ import com.xel.mix.controller.ServerResponse;
 import reactor.core.publisher.Flux;
 
 @Repository
-public interface GenericRepository<T> {
+public interface ElasticRepository {
 
-	void setClazz(Class<T> clazz);
 	Flux<ServerResponse> findWithFilters(Map<String, String> map,
-			Map<String, String> configMap);
-	
+			Map<String, Object> configMap);
+	Flux<ServerResponse> insert(String index, Object o);
+	Flux<ServerResponse> update(Object o);
+	Flux<ServerResponse> delete(Map<String, String> map, Map<String, Object> configMap);
 	
 }

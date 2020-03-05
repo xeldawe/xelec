@@ -18,7 +18,7 @@ import com.xel.mix.cassandra.model.Test;
 
 @Repository
 
-public class TestRepositoryImpl implements TestRepository {
+public class CassandraRepositoryImpl implements CassandraRepository {
 
 
 	@Autowired
@@ -28,7 +28,7 @@ public class TestRepositoryImpl implements TestRepository {
 	
 	private static final String TABLE = Test.class.getAnnotation(Table.class).value();
 
-	public TestRepositoryImpl() {
+	public CassandraRepositoryImpl() {
 	}
 
 	public List<Test> findAllBy(Map<String, ?> map) {
@@ -38,5 +38,7 @@ public class TestRepositoryImpl implements TestRepository {
 		List<Test> tests = template.select(q,Test.class);
 		return tests;
 	}
+	
+	
 
 }

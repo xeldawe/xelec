@@ -4,19 +4,19 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Flux;
 
-public class GenericWebClient<T> {
+public class DefaultWebClient<T> {
 
 	private Class<T> clazz;
 	private WebClient client;
 	private String endpoint;
 
-	public GenericWebClient(String endpoint, Class<T> clazz) {
+	public DefaultWebClient(String endpoint, Class<T> clazz) {
 		super();
 		this.endpoint = endpoint;
 		this.clazz = clazz;
 	}
 
-	public GenericWebClient() {
+	public DefaultWebClient() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -39,6 +39,18 @@ public class GenericWebClient<T> {
 
 	public Flux<T> getFlux() throws WebClientException {
 		return client.get().uri(endpoint).retrieve().bodyToFlux(clazz).doOnError(t -> new WebClientException("Unknow error"));
+	}
+	
+	public Flux<T> postFlux(Object data) throws WebClientException {
+		return client.post().uri(endpoint).bodyValue(data).retrieve().bodyToFlux(clazz).doOnError(t -> new WebClientException("Unknow error"));
+	}
+	
+	public Flux<T> putFlux(Object data) throws WebClientException {
+		return client.put().uri(endpoint).bodyValue(data).retrieve().bodyToFlux(clazz).doOnError(t -> new WebClientException("Unknow error"));
+	}
+	
+	public Flux<T> deleteFlux() throws WebClientException {
+		return client.delete().uri(endpoint).retrieve().bodyToFlux(clazz).doOnError(t -> new WebClientException("Unknow error"));
 	}
 
 }

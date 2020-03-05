@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.xel.mix.cassandra.model.Test;
 
-public interface TestRepository {
+public interface CassandraRepository {
 
 	  public List<Test> findAllBy(Map<String, ?> map);
 	  
