@@ -28,6 +28,7 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +36,7 @@ import org.springframework.stereotype.Component;
 public class ElasticClient {
 
 	public enum Mode {
-		INDEX, GET, SEARCH, DELETE;
+		INDEX, GET, SEARCH, UPDATE, DELETE;
 	}
 
 	@Value("${elastic.search.http.hosts}")
@@ -53,6 +54,7 @@ public class ElasticClient {
 	private ActionListener<IndexResponse> indexListener;
 	private ActionListener<GetResponse> getListener;
 	private ActionListener<SearchResponse> searchListener;
+	private ActionListener<BulkByScrollResponse> updateListener;
 	private ActionListener<BulkByScrollResponse> deleteListener;
 	private Map<UUID, Object> responseMap = new LinkedHashMap<>();
 	private UUID currentRequestor;
@@ -63,6 +65,7 @@ public class ElasticClient {
 		createGetListener();
 		createIndexListener();
 		createSearchListener();
+		createUpdateListener();
 		createDeleteListener();
 	}
 
@@ -137,6 +140,20 @@ public class ElasticClient {
 		};
 	}
 	
+	private void createUpdateListener() {
+		updateListener = new ActionListener<BulkByScrollResponse>() {
+			@Override
+			public void onResponse(BulkByScrollResponse updateResponse) {
+				//responseMap.put(currentRequestor, updateResponse);
+			}
+
+			@Override
+			public void onFailure(Exception e) {
+				responseMap.put(currentRequestor, e.getMessage());
+			}
+		};
+	}
+	
 	private void createDeleteListener() {
 		deleteListener = new ActionListener<BulkByScrollResponse>() {
 			@Override
@@ -181,6 +198,9 @@ public class ElasticClient {
 		case SEARCH:
 			client.searchAsync((SearchRequest) request, RequestOptions.DEFAULT, getListenerByEnum(mode));
 			break;
+		case UPDATE:
+			client.updateByQueryAsync((UpdateByQueryRequest) request, RequestOptions.DEFAULT, getListenerByEnum(mode));
+			break;
 		case DELETE:
 			client.deleteByQueryAsync((DeleteByQueryRequest) request, RequestOptions.DEFAULT, getListenerByEnum(mode));
 			break;
@@ -212,7 +232,7 @@ public class ElasticClient {
 			Object o = getDataFromMap(uuid);
 			int counter = 0;
 			if (o == null) {
-				while (counter < 50000) {
+				while (counter < 5000) {
 					counter++;
 					try {
 						TimeUnit.MILLISECONDS.sleep(1);

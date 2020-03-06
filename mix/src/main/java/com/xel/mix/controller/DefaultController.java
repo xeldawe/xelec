@@ -1,8 +1,5 @@
 package com.xel.mix.controller;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.xel.mix.elastic.model.User;
 import com.xel.mix.elastic.repository.ElasticRepository;
 import com.xel.mix.webclient.service.RequestService;
 
@@ -35,10 +31,9 @@ public class DefaultController {
 	@GetMapping("/user")
 	public Flux<ServerResponse> findWithFilters() {
 		//TMP
-		Map<String, String> map = new LinkedHashMap<>();
-		map.put("test1", "alma");
+		
 		//
-		return gr.findWithFilters(map,null);
+		return gr.findWithFilters(null,null);
 	}
 	
 	@GetMapping("/test")
