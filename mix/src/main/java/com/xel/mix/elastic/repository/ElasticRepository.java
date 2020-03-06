@@ -15,7 +15,6 @@ public interface ElasticRepository {
 			Map<String, Object> configMap);
 	Flux<ServerResponse> insert(String index, Object o);
 	Flux<ServerResponse> delete(Map<String, Object> map, Map<String, Object> configMap);
-	Flux<ServerResponse> insert(Class<?> clazz, Object obj);
 	Flux<ServerResponse> update(String json, Map<String, Object> map, Map<String, Object> configMap);
 	
 }

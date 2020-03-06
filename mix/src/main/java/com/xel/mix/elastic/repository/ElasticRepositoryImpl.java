@@ -52,11 +52,6 @@ public class ElasticRepositoryImpl implements ElasticRepository {
 	private void init() {
 		objectMapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
 	}
-	
-	@Override
-	public Flux<ServerResponse> insert(Class<?> clazz, Object obj) {
-		return insert(clazz.getSimpleName(), obj);
-	}
 
 	@Override
 	public Flux<ServerResponse> insert(String index, Object obj) {

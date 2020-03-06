@@ -42,6 +42,7 @@ public class ElasticController {
 	@Autowired
 	ElasticRepository gr;
 	
+	@SuppressWarnings("unchecked")
 	@GetMapping(value = "elastic",produces = "application/json" )
 	public Flux<ServerResponse> findWithFilters(@RequestParam String jsonQuery)
 			throws JsonMappingException, JsonProcessingException {
@@ -54,11 +55,7 @@ public class ElasticController {
 		return gr.insert(index, obj);
 	}
 
-	@PostMapping("elastic")
-	public <T> Flux<ServerResponse> post(@RequestBody T obj) {
-		return gr.insert(obj.getClass(), obj);
-	}
-
+	@SuppressWarnings("unchecked")
 	@PutMapping("elastic")
 	public Flux<ServerResponse> put(@RequestBody String json, @RequestParam String jsonQuery, @RequestParam String[] indices)
 			throws JsonMappingException, JsonProcessingException {
@@ -68,6 +65,7 @@ public class ElasticController {
 		return gr.update(json, result, configMap);
 	}
 
+	@SuppressWarnings("unchecked")
 	@DeleteMapping("elastic")
 	public Flux<ServerResponse> delete(@RequestParam String[] indices, @RequestParam String jsonQuery) throws JsonMappingException, JsonProcessingException {
 		// TMP
