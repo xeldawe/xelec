@@ -43,7 +43,7 @@ public class DefaultController {
 
 	@DeleteMapping("/test")
 	public Flux<ServerResponse> delete(@RequestParam String[] values) {
-		return Flux.just(rs.getData(rs.requestUrl("http://localhost:8097/elastic?values="+values.toString())));
+		return Flux.just(rs.getData(rs.requestUrl("http://localhost:8097/elastic?values="+values)));
 	}
 
 }

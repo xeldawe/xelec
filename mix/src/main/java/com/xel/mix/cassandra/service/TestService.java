@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.stereotype.Service;
 
+import com.xel.mix.cassandra.core.CassandraCoreTemplate;
 import com.xel.mix.cassandra.model.Test;
 import com.xel.mix.cassandra.repository.CassandraBaseRepository;
 import com.xel.mix.cassandra.repository.CassandraRepositoryImpl;
@@ -17,7 +19,7 @@ import reactor.core.publisher.Flux;
 public class TestService {
 
 	@Autowired
-	CassandraRepositoryImpl testRepository;
+	CassandraRepositoryImpl testRepository = new CassandraRepositoryImpl((CassandraTemplate) CassandraCoreTemplate.DEFAULT.getSession());
 	
 	@Autowired
 	CassandraBaseRepository basicRepository;

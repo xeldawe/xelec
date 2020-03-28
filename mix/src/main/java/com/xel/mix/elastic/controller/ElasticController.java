@@ -22,9 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.xel.mix.controller.ServerResponse;
-import com.xel.mix.elastic.client.ElasticClient;
 import com.xel.mix.elastic.repository.ElasticRepository;
-import com.xel.mix.webclient.service.RequestService;
 
 import reactor.core.publisher.Flux;
 

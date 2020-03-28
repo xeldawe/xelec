@@ -31,6 +31,9 @@ compile group: 'org.elasticsearch', name: 'elasticsearch', version: '7.6.0'
 compile group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.6.0'
 // https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-client
 compile group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '7.6.0'
+// https://mvnrepository.com/artifact/com.datastax.oss/java-driver-core
+compile group: 'com.datastax.oss', name: 'java-driver-core', version: '4.5.1'
+
 
 
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
