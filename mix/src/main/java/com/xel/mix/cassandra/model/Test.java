@@ -6,7 +6,7 @@ import org.springframework.data.cassandra.core.mapping.Table;
 
 import com.xel.mix.cassandra.key.TestKey;
 
-@Table("Test19")
+@Table("Test21")
 public class Test {
 
 	@PrimaryKey(value = "key")

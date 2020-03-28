@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.cassandra.config.CassandraCqlClusterFactoryBean;
+import org.springframework.data.cassandra.config.CassandraEntityClassScanner;
 import org.springframework.data.cassandra.config.CassandraSessionFactoryBean;
 import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.core.CassandraOperations;
@@ -69,7 +70,14 @@ public class CassandraCore{
 	
 	private CassandraMappingContext mappingContext() {
 		CassandraMappingContext mappingContext = new CassandraMappingContext();
+		try {
+			mappingContext.setInitialEntitySet(CassandraEntityClassScanner.scan("com.xel.mix.cassandra"));
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		mappingContext.setUserTypeResolver(new SimpleUserTypeResolver(this.cluster.getObject(), this.keyspace.getName()));
+		mappingContext.afterPropertiesSet();
 		return mappingContext;
 	}
 
@@ -92,9 +100,9 @@ public class CassandraCore{
 		CassandraSessionFactoryBean session = new CassandraSessionFactoryBean();
 		genCluster();
 		session.setCluster(this.cluster.getObject());
+		session.setSchemaAction(SchemaAction.CREATE_IF_NOT_EXISTS);
 		session.setKeyspaceName(this.keyspace.getName());
 		session.setConverter(converter());
-		session.setSchemaAction(SchemaAction.CREATE_IF_NOT_EXISTS);
 		try {
 			session.afterPropertiesSet();
 		} catch (Exception e) {
