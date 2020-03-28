@@ -8,5 +8,6 @@ import com.xel.mix.cassandra.model.Test;
 public interface CassandraRepository {
 
 	  public List<Test> findAllBy(Map<String, ?> map);
+	  public <T> T save(T data);
 	  
 }

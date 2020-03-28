@@ -1,5 +1,8 @@
 package com.xel.mix.elastic.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -40,11 +43,12 @@ public class ElasticController {
 	@Autowired
 	ElasticRepository gr;
 	
+	
 	@SuppressWarnings("unchecked")
 	@GetMapping(value = "elastic",produces = "application/json" )
 	public Flux<ServerResponse> findWithFilters(@RequestParam String jsonQuery)
-			throws JsonMappingException, JsonProcessingException {
-		HashMap<String, Object> result = objectMapper.readValue(jsonQuery, HashMap.class);
+			throws JsonMappingException, JsonProcessingException, UnsupportedEncodingException {
+		HashMap<String, Object> result = objectMapper.readValue(URLDecoder.decode(jsonQuery, StandardCharsets.UTF_8.toString()), HashMap.class);
 		return gr.findWithFilters(result, null);
 	}
 

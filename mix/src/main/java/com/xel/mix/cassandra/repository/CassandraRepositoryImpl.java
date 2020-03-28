@@ -12,23 +12,25 @@ import org.springframework.data.cassandra.core.query.CriteriaDefinition;
 import org.springframework.data.cassandra.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import com.xel.mix.cassandra.core.CassandraCoreTemplate;
 import com.xel.mix.cassandra.model.Test;
 
 @Repository
 public class CassandraRepositoryImpl implements CassandraRepository {
 
-	private CassandraTemplate template;
+	private CassandraTemplate template = (CassandraTemplate) CassandraCoreTemplate.DEFAULT.getSession();
 	private static final String TABLE = Test.class.getAnnotation(Table.class).value();
 
-
-	public CassandraRepositoryImpl(CassandraTemplate template) {
+	public CassandraRepositoryImpl() {
 		super();
-		this.template = template;
 	}
 
-
+	public <T> T save(T data) {
+		    T t = template.insert(data);
+		    return t;
+	}
+	
 	public List<Test> findAllBy(Map<String, ?> map) {
-
 		CriteriaDefinition def1 = where("address").is(map.get("address"));
 		CriteriaDefinition def2 = where("email").is(map.get("email"));
 		Query q = query(def1,def2).withAllowFiltering();

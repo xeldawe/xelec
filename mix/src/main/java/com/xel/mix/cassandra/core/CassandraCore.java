@@ -14,7 +14,7 @@ import org.springframework.data.cassandra.core.convert.MappingCassandraConverter
 import org.springframework.data.cassandra.core.mapping.CassandraMappingContext;
 import org.springframework.data.cassandra.core.mapping.SimpleUserTypeResolver;
 
-public class CassandraCore {
+public class CassandraCore{
 
 	private ContactPoint contactPoint;
 	private Keyspace keyspace;

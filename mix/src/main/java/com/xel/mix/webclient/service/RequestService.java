@@ -29,7 +29,7 @@ public class RequestService {
 	private ExecutorService esCore = Executors.newCachedThreadPool();
 	private static Map<UUID, ServerResponse> rData = new LinkedHashMap<>();
 
-	@Value("${request.service.timeout:1000}")
+	@Value("${request.service.timeout:3000}")
 	private int timeout;
 
 	public enum RequestMode {
@@ -78,7 +78,7 @@ public class RequestService {
 		try {
 			switch (requestMode) {
 			case GET:
-				createClient(data).getFlux().subscribe(res -> response.setMessage(res));
+				createClient(data).getFlux().subscribe(res -> {System.out.println("res: "+res);response.setMessage(res);});
 				break;
 			case POST:
 				createClient(data).postFlux(bodyData).subscribe(res -> response.setMessage(res));
@@ -103,18 +103,18 @@ public class RequestService {
 					e.printStackTrace();
 				}
 				if (counter == timeout) {
+					System.out.println("TIMEOUT!");
 					break;
 				}
 			}
 		} catch (NullPointerException e1 ) {
-			System.out.println("HI");
 			response.setHttpStatus(HttpStatus.BAD_GATEWAY);
 			System.err.println("Unable to connect! "+ccb.getPrefix()+" "+ccb.getIp()+" "+ccb.getPort()+" "+ccb.getEndpoint());
 		} catch (WebClientException e1) {
-			System.out.println("HI");
 			response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 			//System.err.println(e1.getMessage());
 		}
+		System.err.println("Resp: "+response);
 		return response;
 	}
 
@@ -153,6 +153,7 @@ public class RequestService {
 			wc.put(ccb.getIp() + ccb.getPort(), webClient);
 		}
 		this.ccb = ccb;
+		System.err.println("Try to connect! "+ccb.getPrefix()+ccb.getIp()+ccb.getPort()+ccb.getEndpoint());
 		es.submit(wcCheck);
 		return webClient;
 	}
@@ -229,6 +230,7 @@ public class RequestService {
 				e.printStackTrace();
 			}
 			if (counter == timeout+1000) {
+				System.out.println("TIMEOUT!");
 				break;
 			}
 		}

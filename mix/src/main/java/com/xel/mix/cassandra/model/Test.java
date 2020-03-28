@@ -9,7 +9,6 @@ import com.xel.mix.cassandra.key.TestKey;
 @Table("Test19")
 public class Test {
 
-
 	@PrimaryKey(value = "key")
 	private TestKey key;
 	@Column
